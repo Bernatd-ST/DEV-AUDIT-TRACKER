@@ -8,6 +8,7 @@ type Project struct {
 	Status       string `gorm:"default:'CREATED'"`
 	HasFSD       bool   `gorm:"default:false"`
 	HasAnalysis  bool   `gorm:"default:false"`
+	HasSIT       bool   `gorm:"default:false"`
 	DocCount     int    `gorm:"default:0"` // untuk jumlah 4 dokumen signature
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
