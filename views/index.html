@@ -45,25 +45,29 @@
                         <tbody>
                             {{ range .Projects }}
                             <tr>
-                                <td><span class="fw-bold text-primary">{{ .TicketNumber }}</span></td>
+                                <td><span class="fw-bold text-primary">{{ .Project.TicketNumber }}</span></td>
                                 <td>
                                     <span class="status-badge 
-                                        {{ if eq .Status "KICK_OFF" }}bg-kickoff
-                                        {{ else if eq .Status "DEVELOPMENT_START" }}bg-devstart
-                                        {{ else if eq .Status "DEV_DONE" }}bg-devdone
-                                        {{ else if eq .Status "DEV_REVISION_UAT" }}bg-revision
+                                        {{ if eq .Project.Status "KICK_OFF" }}bg-kickoff
+                                        {{ else if eq .Project.Status "DEVELOPMENT_START" }}bg-devstart
+                                        {{ else if eq .Project.Status "DEV_DONE" }}bg-devdone
+                                        {{ else if eq .Project.Status "DEV_REVISION_UAT" }}bg-revision
+                                        {{ else if eq .Project.Status "SIT_DONE" }}bg-revision
                                         {{ else }}bg-created {{ end }}">
-                                        {{ .Status }}
+                                        {{ .Project.Status }}
                                     </span>
+                                    {{ if eq .Project.Status "PROJECT_DONE" }}
+                                        <a href="/comparison?ticket={{ .TicketEscaped }}" class="btn btn-sm btn-primary ms-2">View Comparison</a>
+                                    {{ end }}
                                 </td>
                                 <td>
                                     <small class="text-muted">
-                                        FSD: {{ if .HasFSD }}✅{{ else }}❌{{ end }} | 
-                                        Anly: {{ if .HasAnalysis }}✅{{ else }}❌{{ end }} | 
-                                        Docs: {{ .DocCount }}/4
+                                        FSD: {{ if .Project.HasFSD }}✅{{ else }}❌{{ end }} | 
+                                        Anly: {{ if .Project.HasAnalysis }}✅{{ else }}❌{{ end }} | 
+                                        Docs: {{ .Project.DocCount }}/4
                                     </small>
                                 </td>
-                                <td><small class="text-muted">{{ .UpdatedAt.Format "02 Jan 15:04" }}</small></td>
+                                <td><small class="text-muted">{{ .Project.UpdatedAt.Format "02 Jan 15:04" }}</small></td>
                             </tr>
                             {{ else }}
                             <tr>
@@ -86,6 +90,26 @@
 
     // Update waktu sinkronisasi
     document.getElementById('last-sync').innerText = "Terakhir Sinkron: " + new Date().toLocaleTimeString();
+
+    // Frontend logging function
+    function logFrontend(message) {
+        fetch('/log', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message })
+        }).catch(err => console.error('Log failed:', err));
+    }
+
+    // Log on page load
+    window.onload = function() {
+        logFrontend("Dashboard page loaded");
+    };
+
+    // Uncomment for auto refresh with logging
+    // setTimeout(function(){
+    //    logFrontend("Dashboard auto-refreshed");
+    //    location.reload();
+    // }, 5000);
 </script>
 
 </body>
